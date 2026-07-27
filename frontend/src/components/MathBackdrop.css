@@ -1,0 +1,42 @@
+.math-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+}
+
+.math-backdrop-item {
+  position: absolute;
+  font-family: var(--font-mono);
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--ink);
+  opacity: 0.1;
+  white-space: nowrap;
+  animation: math-drift var(--duration) var(--delay) ease-in-out infinite alternate;
+  transition: transform 0.6s cubic-bezier(0.32, 0, 0.67, 0), opacity 0.45s ease;
+}
+
+@keyframes math-drift {
+  from {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  to {
+    transform: translate(var(--drift-x), var(--drift-y)) rotate(var(--rotate));
+  }
+}
+
+.math-backdrop-item.is-bursting {
+  animation: none;
+  opacity: 0;
+}
+
+.math-backdrop-item.burst-left {
+  transform: translateX(-160vw) rotate(-25deg);
+}
+
+.math-backdrop-item.burst-right {
+  transform: translateX(160vw) rotate(25deg);
+}

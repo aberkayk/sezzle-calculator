@@ -32,11 +32,17 @@ function getPreview(operation: Operation, a: string, b: string): string {
   }
 }
 
-export function Calculator() {
+interface CalculatorProps {
+  /** Called every time the Calculate button is pressed, before validation. */
+  onCalculate?: () => void
+}
+
+export function Calculator({ onCalculate }: CalculatorProps) {
   const [operation, setOperation] = useState<Operation>('add')
   const [a, setA] = useState('')
   const [b, setB] = useState('')
   const [result, setResult] = useState<number | null>(null)
+  const [resultExpression, setResultExpression] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
 
@@ -54,7 +60,9 @@ export function Calculator() {
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault()
+    onCalculate?.()
     setResult(null)
+    setResultExpression(null)
 
     const validationError = validate()
     if (validationError) {
@@ -67,6 +75,7 @@ export function Calculator() {
     try {
       const value = await calculate(operation, Number(a), isUnary ? undefined : Number(b))
       setResult(value)
+      setResultExpression(getPreview(operation, a, b))
     } catch (err) {
       const message = err instanceof CalculatorApiError ? err.message : 'Could not reach the calculator service.'
       setError(message)
@@ -94,7 +103,7 @@ export function Calculator() {
           </p>
         ) : result !== null ? (
           <p className="screen-line screen-line--result" data-testid="result">
-            Result: <strong>{result}</strong>
+            {resultExpression} = <strong>{result}</strong>
           </p>
         ) : (
           <p className="screen-line screen-line--idle">
@@ -112,6 +121,7 @@ export function Calculator() {
             onChange={(event) => {
               setOperation(event.target.value as Operation)
               setResult(null)
+              setResultExpression(null)
               setError(null)
             }}
           >

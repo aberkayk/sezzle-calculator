@@ -28,7 +28,7 @@ describe('Calculator', () => {
     await user.click(screen.getByRole('button', { name: /calculate/i }))
 
     await waitFor(() => {
-      expect(screen.getByTestId('result')).toHaveTextContent('Result: 42')
+      expect(screen.getByTestId('result')).toHaveTextContent('35 + 7 = 42')
     })
   })
 
@@ -66,5 +66,16 @@ describe('Calculator', () => {
     await user.click(screen.getByRole('button', { name: /calculate/i }))
 
     expect(await screen.findByRole('alert')).toHaveTextContent('division by zero')
+  })
+
+  it('calls onCalculate as soon as the Calculate button is pressed', async () => {
+    const user = userEvent.setup()
+    const onCalculate = vi.fn()
+    mockFetchOnce({ ok: true, body: { result: 42 } })
+
+    render(<Calculator onCalculate={onCalculate} />)
+    await user.click(screen.getByRole('button', { name: /calculate/i }))
+
+    expect(onCalculate).toHaveBeenCalledTimes(1)
   })
 })
