@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { calculate, CalculatorApiError, UNARY_OPERATIONS, type Operation } from '../api/calculatorClient'
+import { ThemeToggle } from './ThemeToggle'
 import './Calculator.css'
 
 const OPERATIONS: { value: Operation; label: string; symbol: string }[] = [
@@ -11,6 +12,25 @@ const OPERATIONS: { value: Operation; label: string; symbol: string }[] = [
   { value: 'sqrt', label: 'Square Root', symbol: '√a' },
   { value: 'percentage', label: 'Percentage', symbol: 'b% of a' },
 ]
+
+function getPreview(operation: Operation, a: string, b: string): string {
+  switch (operation) {
+    case 'add':
+      return `${a} + ${b}`
+    case 'subtract':
+      return `${a} − ${b}`
+    case 'multiply':
+      return `${a} × ${b}`
+    case 'divide':
+      return `${a} ÷ ${b}`
+    case 'exponentiate':
+      return `${a} ^ ${b}`
+    case 'sqrt':
+      return `√${a}`
+    case 'percentage':
+      return `${b}% of ${a}`
+  }
+}
 
 export function Calculator() {
   const [operation, setOperation] = useState<Operation>('add')
@@ -55,9 +75,34 @@ export function Calculator() {
     }
   }
 
+  const preview = getPreview(operation, a || '0', b || '0')
+
   return (
     <div className="calculator">
-      <h1>Calculator</h1>
+      <div className="calculator-header">
+        <div>
+          <p className="calculator-eyebrow">Calc / rev. 01</p>
+          <h1>Calculator</h1>
+        </div>
+        <ThemeToggle />
+      </div>
+
+      <div className="screen" key={error ?? result ?? 'idle'}>
+        {error ? (
+          <p className="screen-line screen-line--error" role="alert">
+            {error}
+          </p>
+        ) : result !== null ? (
+          <p className="screen-line screen-line--result" data-testid="result">
+            Result: <strong>{result}</strong>
+          </p>
+        ) : (
+          <p className="screen-line screen-line--idle">
+            {preview}
+            <span className="screen-cursor" aria-hidden="true" />
+          </p>
+        )}
+      </div>
 
       <form onSubmit={handleSubmit} className="calculator-form">
         <label className="field">
@@ -78,46 +123,36 @@ export function Calculator() {
           </select>
         </label>
 
-        <label className="field">
-          <span>{isUnary ? 'Value' : 'First value'}</span>
-          <input
-            type="number"
-            inputMode="decimal"
-            value={a}
-            onChange={(event) => setA(event.target.value)}
-            placeholder="e.g. 10"
-          />
-        </label>
-
-        {!isUnary && (
+        <div className="field-row">
           <label className="field">
-            <span>Second value</span>
+            <span>{isUnary ? 'Value' : 'First value'}</span>
             <input
               type="number"
               inputMode="decimal"
-              value={b}
-              onChange={(event) => setB(event.target.value)}
-              placeholder="e.g. 4"
+              value={a}
+              onChange={(event) => setA(event.target.value)}
+              placeholder="0"
             />
           </label>
-        )}
 
-        <button type="submit" disabled={isLoading}>
+          {!isUnary && (
+            <label className="field">
+              <span>Second value</span>
+              <input
+                type="number"
+                inputMode="decimal"
+                value={b}
+                onChange={(event) => setB(event.target.value)}
+                placeholder="0"
+              />
+            </label>
+          )}
+        </div>
+
+        <button type="submit" className="equals-key" disabled={isLoading}>
           {isLoading ? 'Calculating…' : 'Calculate'}
         </button>
       </form>
-
-      {error && (
-        <p className="message message-error" role="alert">
-          {error}
-        </p>
-      )}
-
-      {result !== null && !error && (
-        <p className="message message-result" data-testid="result">
-          Result: <strong>{result}</strong>
-        </p>
-      )}
     </div>
   )
 }

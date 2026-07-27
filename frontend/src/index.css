@@ -1,22 +1,49 @@
+/*
+  Palette: a warm, non-black "instrument panel" — a calculator's plastic
+  chassis, key faces, and a phosphor LCD readout — rather than a generic
+  light/dark UI. The green screen glow only appears inside the readout,
+  never as a general accent.
+*/
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #f3f4f6;
+  --bg: #e7e4dc;
+  --panel: #e0dccf;
+  --ink: #23231f;
+  --muted: #6b6a61;
+  --key-bg: #f7f5ef;
+  --key-border: #c7c3b6;
+  --accent: #c4632b;
+  --accent-ink: #fff8ef;
+  --screen-bg: #c7cfb9;
+  --screen-ink: #263021;
+  --danger: #a23b2e;
+  --danger-screen-bg: #d9c3ba;
+  --focus-ring: #c4632b;
 
-  font: 16px/145% system-ui, 'Segoe UI', Roboto, sans-serif;
+  --font-mono:
+    'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  font-family: var(--font-mono);
   color-scheme: light dark;
-  color: var(--text-h);
+  color: var(--ink);
   background: var(--bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-  }
+:root[data-theme='dark'] {
+  --bg: #1d1c16;
+  --panel: #242217;
+  --ink: #ede8da;
+  --muted: #9a9686;
+  --key-bg: #2e2c20;
+  --key-border: #3e3b2c;
+  --accent: #e08a3e;
+  --accent-ink: #1d1c16;
+  --screen-bg: #182016;
+  --screen-ink: #9fe39a;
+  --danger: #e2775f;
+  --danger-screen-bg: #2a1a16;
+  --focus-ring: #e08a3e;
 }
 
 * {
@@ -29,4 +56,13 @@ body {
 
 #root {
   min-height: 100svh;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
 }
